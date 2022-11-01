@@ -30,8 +30,6 @@ class ApiConfig {
             return retrofit.create(ApiService::class.java)
         }
 
-
-        var USER: User = User()
         const val UNKNOWN_ERROR = "Unknown Error"
     }
 }

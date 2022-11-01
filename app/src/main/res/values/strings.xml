@@ -6,15 +6,24 @@
     <string name="enter_your_password">Enter your password</string>
     <string name="field_error_name">Please fill name field!</string>
     <string name="field_error_email">Please fill email field!</string>
+    <string name="field_error_email_pattern">Email pattern is not correct!</string>
     <string name="field_error_password">Please fill password field!</string>
-    <string name="field_error_password_length">Password length must be more than 8 characters!</string>
+    <string name="field_error_password_length">Password length must be more than 6 characters!</string>
     <string name="login">Login</string>
+    <string name="logout">Logout</string>
     <string name="register">Register</string>
+    <string name="profile">Profile</string>
+    <string name="username">Username</string>
+    <string name="name">Name</string>
+    <string name="description">Description</string>
+    <string name="stories">Stories</string>
 
     <string name="cd_story_app">Story App</string>
     <string name="i_dont_have_account">I don\'t have account, register now</string>
     <string name="already_have_account">Already have account, login instead</string>
     <string name="show_password">Show password</string>
     <string name="hide_password">Hide password</string>
+
+    <string name="story_photo">Story photo</string>
 
 </resources>

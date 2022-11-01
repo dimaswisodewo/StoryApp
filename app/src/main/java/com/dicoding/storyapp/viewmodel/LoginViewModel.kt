@@ -1,25 +1,27 @@
 package com.dicoding.storyapp.viewmodel
 
+import android.app.Application
 import android.util.Log
+import androidx.lifecycle.*
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.dicoding.storyapp.localdata.UserPreferences
 import com.dicoding.storyapp.model.GeneralResponse
 import com.dicoding.storyapp.model.LoginResponse
 import com.dicoding.storyapp.model.LoginResult
-import com.dicoding.storyapp.model.User
 import com.dicoding.storyapp.networking.ApiConfig
 import com.dicoding.storyapp.other.Event
-import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONObject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel(application: Application, private val pref: UserPreferences) : ViewModel() {
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> get() = _loginResult
 
@@ -29,7 +31,7 @@ class LoginViewModel : ViewModel() {
     private val _isError = MutableLiveData<Boolean>()
     val isError: LiveData<Boolean> get() = _isError
 
-    val gson = Gson()
+    private val gson = Gson()
 
     var errorMessage: String = ""
         private set
@@ -56,11 +58,11 @@ class LoginViewModel : ViewModel() {
                     } else {
                         // Login success
                         with (responseBody) {
-                            with (ApiConfig.USER) {
-                                id = loginResult?.userId.toString()
-                                name = loginResult?.name.toString()
+                            saveUserPreferences(
+                                id = loginResult?.userId.toString(),
+                                name = loginResult?.name.toString(),
                                 token = loginResult?.token.toString()
-                            }
+                            )
                         }
                         _loginResult.postValue(responseBody.loginResult!!)
                     }
@@ -126,5 +128,27 @@ class LoginViewModel : ViewModel() {
         errorMessage = StringBuilder("ERROR: ").append(message).toString()
 
         _isError.value = true
+    }
+
+    private fun saveUserPreferences(id: String, name: String, token: String) {
+        viewModelScope.launch {
+            pref.saveUserPreferences(userId = id, userName = name, userToken = token)
+        }
+    }
+
+    fun isUserDataExists(): LiveData<Boolean> {
+        return pref.isUserDataExists().asLiveData()
+    }
+
+    fun getUserDataUsername(): Flow<String> {
+        return pref.getUserName()
+    }
+
+    fun getUserDataId(): Flow<String> {
+        return pref.getUserId()
+    }
+
+    fun getUserDataToken(): Flow<String> {
+        return pref.getUserToken()
     }
 }

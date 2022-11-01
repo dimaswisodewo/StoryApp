@@ -7,6 +7,7 @@ import com.dicoding.storyapp.model.StoryDetailResponse
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.*
+import java.io.File
 
 interface ApiService {
 
@@ -28,19 +29,25 @@ interface ApiService {
     @POST("stories")
     fun addNewStory(
         @HeaderMap headers: Map<String, String>,
-        @Body requestBody: RequestBody
+        @Field("description") description: String,
+        @Field("photo") photo: File,
+        @Field("lat") lat: Float? = null,
+        @Field("lon") lon: Float? = null
     ) : Call<GeneralResponse>
 
     @POST("stories/guest")
     fun addNewStoryGuest(
-        @Body requestBody: RequestBody
+        @Field("description") description: String,
+        @Field("photo") photo: File,
+        @Field("lat") lat: Float? = null,
+        @Field("lon") lon: Float? = null
     ) : Call<GeneralResponse>
 
     @GET("stories")
     fun getAllStories(
         @HeaderMap headers: Map<String, String>,
-        @Query("page") page: Int?,
-        @Query("size") size: Int?,
+        @Query("page") page: Int? = null,
+        @Query("size") size: Int? = null,
         @Query("location") location: Int = 0
     ) : Call<StoriesResponse>
 
@@ -50,16 +57,16 @@ interface ApiService {
         @Path("id") id: String
     ) : Call<StoryDetailResponse>
 
-    fun getHeaderAddStory() : Map<String, String> {
+    fun getHeaderAddStory(userToken: String) : Map<String, String> {
         val headerMap = mutableMapOf<String, String>()
         headerMap["Content-Type"] = "multipart/form-data"
-        headerMap["Authorization"] = ApiConfig.USER.token
+        headerMap["Authorization"] = userToken
         return headerMap
     }
 
-    fun getHeaderAuthorization() : Map<String, String> {
+    fun getHeaderAuthorization(userToken: String) : Map<String, String> {
         val headerMap = mutableMapOf<String, String>()
-        headerMap["Authorization"] = ApiConfig.USER.token
+        headerMap["Authorization"] = userToken
         return headerMap
     }
 }
